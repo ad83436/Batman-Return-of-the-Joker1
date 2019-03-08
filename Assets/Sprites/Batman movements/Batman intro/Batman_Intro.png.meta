@@ -112,33 +112,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Batman_Intro_0
-      rect:
-        serializedVersion: 2
-        x: 1
-        y: 1435
-        width: 7
-        height: 20
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 71c48e1fd3e43e84e874cd346d2a69ba
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Batman_Intro_1
       rect:
         serializedVersion: 2
-        x: 0
+        x: 1
         y: 1299
-        width: 66
-        height: 157
+        width: 65
+        height: 156
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

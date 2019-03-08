@@ -9,7 +9,7 @@ namespace Examples.Inheritance
     public class MissileLauncher
     {
         private Missile missile;
-        
+
         //Contructor Method
         //This is a special type of method that is called when you create an instance from a class.
         //Constructor methods have no return type and must have the same name as the class.

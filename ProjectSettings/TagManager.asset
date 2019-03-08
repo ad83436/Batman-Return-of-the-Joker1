@@ -10,6 +10,54 @@ TagManager:
   - FootCollider
   - JumpMan
   - JumpMan1
+  - Pillar
+  - BallnChain
+  - ChainGuard
+  - BallnChain1
+  - BallnChain2
+  - GenericBullet
+  - FirePosition
+  - KnifeEnemy
+  - Knife
+  - 'attack '
+  - gargoyle
+  - BoltAttack
+  - JBULLETS
+  - MuzzleFlash
+  - LifePoint
+  - LifePoint1
+  - LifePoint2
+  - LifePoint3
+  - LifePoint4
+  - LifePoint5
+  - LifePoint6
+  - LifePoint7
+  - KnifeEnemy1
+  - PlatformBBound
+  - PlatformTBound
+  - PlatformFloor
+  - PlatformFloor1
+  - PlatformFloor2
+  - PlatformFloor3
+  - PlatformFloor4
+  - Stand
+  - Clouds
+  - Clouds1
+  - Clouds2
+  - Clouds3
+  - Clouds4
+  - Clouds5
+  - Clouds6
+  - Clouds7
+  - Clouds8
+  - CrouchCollider
+  - Crate
+  - Crate1
+  - Crate2
+  - Crate3
+  - Crate4
+  - Crate5
+  - Crate6
   layers:
   - Default
   - TransparentFX
@@ -22,8 +70,8 @@ TagManager:
   - Enemy
   - Background
   - Batman
-  - 
-  - 
+  - Pillars
+  - ball and chain
   - 
   - 
   - 
@@ -55,4 +103,7 @@ TagManager:
     locked: 0
   - name: enemy
     uniqueID: 2612378029
+    locked: 0
+  - name: Pillars
+    uniqueID: 741337783
     locked: 0

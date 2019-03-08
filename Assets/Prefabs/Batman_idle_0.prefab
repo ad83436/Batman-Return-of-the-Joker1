@@ -155,8 +155,8 @@ BoxCollider2D:
   m_Offset: {x: 3.5922852, y: -1.4316626}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 33, y: 48}
+    pivot: {x: 0.61042905, y: 0.77180016}
+    oldSize: {x: 33, y: 46}
     newSize: {x: 33, y: 48}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -177,7 +177,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1849a6163622a04faa9938a1fb563b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 0
+  theDamage: 0
   batman: {fileID: 0}
+  DarkKnight: {fileID: 0}
   animation: {fileID: 1603811021257402769}
-  xSpeed: 40
-  ySpeed: 125
+  walkSpeed: 0
+  Grounded: 1
+  jumpedHeld: 0
+  jumpTime: 0
+  Wall: []
+  jumpEnemy: []
+  Bullet: {fileID: 2695999831035954587, guid: 5efbfc33eda72234893032eeec6b9451, type: 3}
+  bulletPos: {fileID: 0}
+  BulletSpeed: 0

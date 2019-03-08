@@ -4,26 +4,22 @@ using UnityEngine;
 
 public class HealthandDeath : MonoBehaviour
 {
-    public int maxHealth;
-    public int theDamage;
-    
+    public float maxHealth;
+    public float theDamage;
 
-    
+
+    public bool IsHitForHealthBar;
+   
     void Start()
     {
         
     }
-    public virtual void dealDamage(){
-        
-    }
-   
+
     public virtual void Death()
     {
-       if (gameObject.GetComponent<HealthandDeath>().maxHealth <= 0)
-        {
-            Destroy(gameObject);
-        }
+       if (this.gameObject.GetComponent<HealthandDeath>().maxHealth <= 0)
+       {
+            Destroy(this.gameObject);
+       }
     }
-
-
 }
