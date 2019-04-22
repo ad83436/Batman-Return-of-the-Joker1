@@ -2,25 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Crates : CrateParents
+public class Crates : HealthandDeath
 {
-    public CrateParents[] crates;
-    
+    public bool isDestroyed;
+    public Animator crateAnimator;
+   // public HealthandDeath creatsHealth;
+    public BoxCollider2D createCollider;
+    public List<Crates> crates = new List<Crates>();
+
+
     // Start is called before the first frame update
     void Start()
     {
-        crates = new CrateParents[9];
-        crates[0] = GameObject.FindWithTag("Crate").GetComponent<CrateParents>();
-       // crates[1] = GameObject.FindWithTag("Crate").GetComponent<CrateParents>();
-       // crates[2] = GameObject.FindWithTag("Crate").GetComponent<CrateParents>();
-       // crates[3] = GameObject.FindWithTag("Crate").GetComponent<CrateParents>();
-       // crates[4] = GameObject.FindWithTag("Crate").GetComponent<CrateParents>();
-       // crates[5] = GameObject.FindWithTag("Crate").GetComponent<CrateParents>();
-       // crates[6] = GameObject.FindWithTag("Crate").GetComponent<CrateParents>();
-       // crates[7] = GameObject.FindWithTag("Crate").GetComponent<CrateParents>();
-       // crates[8] = GameObject.FindWithTag("Crate").GetComponent<CrateParents>();
-       // crates[9] = GameObject.FindWithTag("Crate").GetComponent<CrateParents>();
- 
+        crates.Add(this);
+        maxHealth = 5;
+
+        crateAnimator = GetComponent<Animator>();
+        createCollider = GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
@@ -31,28 +29,40 @@ public class Crates : CrateParents
 
     public override void Death()
     {
-        if(crates[0].maxHealth <= 0)
+        if (maxHealth <= 0)
         {
-            crates[0].GetComponent<Animator>().SetBool("isDestroyed", true);
+            crateAnimator.SetBool("isDestroyed", true);
         }
 
-        if(crates[0].GetComponent<Animator>().GetBool("isDestroyed") == true)
+        if (crateAnimator.GetBool("isDestroyed"))
         {
-            crates[0].GetComponent<BoxCollider2D>().enabled = false;
+            createCollider.enabled = false;
+
         }
     }
+
     public void DestroyCrate()
     {
-        Destroy(this.gameObject);
+        Destroy(gameObject);
+    }
+
+    public void takeDamage()
+    {
+        maxHealth -= 1;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.tag == "GenericBullet" && gameObject.tag == "Crate") 
+        if (collision.gameObject.tag == "GenericBullet" )
         {
             takeDamage();
             Destroy(collision.gameObject);
-           
+            Debug.Log("hit crate");
         }
+    }
+
+    public void OnDestroy()
+    {
+        crates.Remove(this);
     }
 }

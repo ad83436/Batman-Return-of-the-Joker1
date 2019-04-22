@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.Serialization;
 
 public class Batman : HealthandDeath
 {
@@ -12,45 +13,45 @@ public class Batman : HealthandDeath
     public Platforms platform;
     public GameObject GenericBullet;
     public float walkSpeed;
-    public bool Grounded = true;
+    public bool Grounded;
     public bool jumpedHeld = false;
     public float jumpTime = 0;
-    public GameObject[] Wall;
-    public KnifeThrower[] knifeThrower;
     public bool shootNow = false;
     public bool shootNow2 = false;
     public float fireRate;
     public float fireRate2;
     public string ThePlatforms;
+    public float timeTillNextJumpAllowed;
     float nextFire;
     float nextFire1;
     public bool canJump;
     public bool canHit;
     public HealthandDeath batHealth;
     BoxCollider2D crouchCollider;
+    public bool canFlip;
+    public static bool gameOver = false;
+    public static bool isWalking;
+    public bool introDone;
+    public static bool isDead = false;
+
 
 
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
+        NoiseManager.instance.PlaySound("Intro");
+        NoiseManager.instance.PlaySound("GoFuckYourSelf");
         canJump = true;
         GenericBullet.GetComponent<GameObject>();
-        knifeThrower = new KnifeThrower[2];
         crouchCollider = GameObject.FindWithTag("CrouchCollider").GetComponent<BoxCollider2D>();
-        platform = GameObject.FindWithTag("PlatformFloor1").GetComponent<Platforms>();
         batman = GameObject.FindWithTag("Batman").GetComponent<Rigidbody2D>();
         render = GetComponent<SpriteRenderer>();
         animation = GameObject.FindWithTag("Batman").GetComponent<Animator>();
-        Wall = GameObject.FindGameObjectsWithTag("Wall");
         batHealth = GameObject.FindWithTag("Batman").GetComponent<HealthandDeath>();
-        knifeThrower[0] = GameObject.FindWithTag("KnifeEnemy").GetComponent<KnifeThrower>();
-        knifeThrower[1] = GameObject.FindWithTag("KnifeEnemy1").GetComponent<KnifeThrower>();
-        //jumpEnemy[0] = GameObject.FindWithTag("JumpMan").GetComponent<NPC>();
-        //jumpEnemy[1] = GameObject.FindWithTag("JumpMan1").GetComponent<NPC>();
     }
 
     // Update is called once per frame
-    private void FixedUpdate()
+    public void FixedUpdate()
     {
         theBatsHitCondition();
         TheBatShot();
@@ -58,6 +59,8 @@ public class Batman : HealthandDeath
         TheBatJump();
         Death();
         HitKnockBack();
+        GameOver();
+        IntroDone();
     }
 
     public void TheBatMovement()
@@ -69,19 +72,17 @@ public class Batman : HealthandDeath
 
         Vector2 xForce = new Vector2(x, batman.velocity.y);
         batman.velocity = xForce;
-
         animation.SetFloat("Speed", Mathf.Abs(xForce.x));
 
-        if (axisH > 0.0f)
+        if (axisH > 0.0f && canFlip)
         {
             render.flipX = false;
         }
 
-        else if (axisH < 0.0f)
+        else if (axisH < 0.0f && canFlip)
         {
             render.flipX = true;
         }
-
 
         if (axisV > 0 && Grounded)
         {
@@ -97,7 +98,6 @@ public class Batman : HealthandDeath
             batman.GetComponent<BoxCollider2D>().enabled = false;
             walkSpeed = 0;
             canJump = false;
-
         }
 
         else if (!Grounded)
@@ -105,21 +105,36 @@ public class Batman : HealthandDeath
             walkSpeed = 110;
         }
 
-        else if (animation.GetBool("isHit") == true)
+        else if (animation.GetBool("isHit"))
         {
             walkSpeed = 0;
+            canFlip = false;
+            canJump = false;
         }
-         
+
         else
         {
+            canFlip = true;
             crouchCollider.enabled = false;
             batman.GetComponent<BoxCollider2D>().enabled = true;
             animation.SetBool("isLookingUp", false);
             animation.SetBool("isCrouching", false);
             walkSpeed = 110;
-        } 
+        }
+
+        if (Mathf.Abs(batman.velocity.x) > 0.1)
+        {
+            isWalking = true;
+        }
+
+        else
+        {
+            isWalking = false;
+        }
     }
 
+    //NEEDS FIX// Player can jump right when they hit the floor needs a cool down so that when the
+    //player lands  they need to wait a second r 2 before they can jump again
     private void TheBatJump()
     {
         float jumpHeight = 200.0f;
@@ -130,10 +145,11 @@ public class Batman : HealthandDeath
 
             if (Grounded && jumpTime < .2)
             {
+
                 batman.velocity = new Vector2(0.0f, jumpHeight);
                 Grounded = false;
-
                 Debug.Log("the short jump " + batman.velocity.y);
+                NoiseManager.instance.PlaySound("BatJumpSound");
             }
 
             else if (!Grounded && jumpedHeld)
@@ -145,13 +161,9 @@ public class Batman : HealthandDeath
             }
         }
 
-        if (!Input.GetButton("Jump"))
-        {
-            canJump = true;
-        }
-
         if (!Grounded)
         {
+
             animation.SetBool("isJumping", true);
         }
     }
@@ -161,6 +173,7 @@ public class Batman : HealthandDeath
         if (Grounded)
         {
             jumpTime = 0;
+
         }
 
         else if (!Grounded)
@@ -178,8 +191,8 @@ public class Batman : HealthandDeath
 
             }
         }
-    }
 
+    }
 
     //fix so that everytime the button is pushed down for fire 1 that it fires another projectiole and if it is held another type of speical projectile is sho
     private void TheBatShot()
@@ -187,17 +200,20 @@ public class Batman : HealthandDeath
         GameObject BulletInstance;
         GameObject BulletInstance1;
 
-        if (Input.GetButton("Fire1"))
+        if (Input.GetButton("Fire1") && !animation.GetBool("isCrouching"))
         {
+            canJump = false;
             if (render.flipX == false && Grounded)
             {
+
                 animation.SetBool("isShooting", true);
 
                 if (shootNow && Time.time > nextFire)
                 {
+                    NoiseManager.instance.PlaySound("BatShot");
                     nextFire = Time.time + fireRate2;
                     GenericBullet.GetComponent<SpriteRenderer>().flipX = false;
-                    GenericBullet.transform.position = batman.position + new Vector2(25.0f, 0.8f);
+                    GenericBullet.transform.position = batman.position + new Vector2(25.0f, 1.0f);
                     BulletInstance = Instantiate(GenericBullet, GenericBullet.transform.position, GenericBullet.transform.rotation);
                     BulletInstance.GetComponent<Rigidbody2D>().velocity = new Vector2(200.0f, 0.0f);
                     Destroy(BulletInstance, 2);
@@ -210,37 +226,46 @@ public class Batman : HealthandDeath
 
                 if (shootNow && Time.time > nextFire)
                 {
+                    NoiseManager.instance.PlaySound("BatShot");
                     nextFire = Time.time + fireRate2;
                     GenericBullet.GetComponent<SpriteRenderer>().flipX = true;
-                    GenericBullet.transform.position = batman.position + new Vector2(-25.0f, 0.8f);
+                    GenericBullet.transform.position = batman.position + new Vector2(-25.0f, 1.0f);
                     BulletInstance = Instantiate(GenericBullet, GenericBullet.transform.position, GenericBullet.transform.rotation);
                     BulletInstance.GetComponent<Rigidbody2D>().velocity = new Vector2(-200.0f, 0.0f);
                     Destroy(BulletInstance, 2);
                 }
             }
-
         }
+
+   
+
+
 
         else
         {
             animation.SetBool("isShooting", false);
             shootNow = false;
+           
+            
         }
 
-
-        if (Input.GetButton("Fire2")) {
+        if (Input.GetButton("Fire2") && !animation.GetBool("isCrouching"))
+        {
+            canJump = false;
+           
             if (render.flipX == false && Grounded)
             {
                 animation.SetBool("isShooting2", true);
 
                 if (shootNow2 && Time.time > nextFire1)
                 {
+                    NoiseManager.instance.PlaySound("BatShot");
                     nextFire1 = Time.time + fireRate;
                     GenericBullet.GetComponent<SpriteRenderer>().flipX = false;
-                    GenericBullet.transform.position = batman.position + new Vector2(25.0f, 0.8f);
-                    BulletInstance1 = Instantiate(GenericBullet, GenericBullet.transform.position, GenericBullet.transform.rotation);
-                    BulletInstance1.GetComponent<Rigidbody2D>().velocity = new Vector2(200.0f, 0.0f);
-                    Destroy(BulletInstance1, 2);
+                    GenericBullet.transform.position = batman.position + new Vector2(25.0f, 1.0f);
+                    BulletInstance = Instantiate(GenericBullet, GenericBullet.transform.position, GenericBullet.transform.rotation);
+                    BulletInstance.GetComponent<Rigidbody2D>().velocity = new Vector2(200.0f, 0.0f);
+                    Destroy(BulletInstance, 2);
                 }
             }
 
@@ -250,10 +275,53 @@ public class Batman : HealthandDeath
 
                 if (shootNow2 && Time.time > nextFire1)
                 {
+                    NoiseManager.instance.PlaySound("BatShot");
                     nextFire1 = Time.time + fireRate;
 
                     GenericBullet.GetComponent<SpriteRenderer>().flipX = true;
-                    GenericBullet.transform.position = batman.position + new Vector2(-25.0f, 0.8f);
+                    GenericBullet.transform.position = batman.position + new Vector2(-25.0f, 1.0f);
+                    BulletInstance = Instantiate(GenericBullet, GenericBullet.transform.position, GenericBullet.transform.rotation);
+                    BulletInstance.GetComponent<Rigidbody2D>().velocity = new Vector2(-200.0f, 0.0f);
+                    Destroy(BulletInstance, 2);
+                }
+            }
+        }
+
+        if (!Input.GetButton("Fire2"))
+        {
+
+            animation.SetBool("isShooting2", false);
+            shootNow2 = false;
+        }
+
+
+
+        #region CrouchShooting
+
+        if (Input.GetButton("Fire1") & animation.GetBool("isCrouching"))
+        {
+            animation.SetBool("isCrouchShooting", true);
+
+            shootNow = true;
+            if (shootNow && Time.time > nextFire)
+            {
+                nextFire = Time.time + fireRate2;
+
+                if (!render.flipX && Grounded)
+                {
+                    NoiseManager.instance.PlaySound("BatShot");
+                    GenericBullet.GetComponent<SpriteRenderer>().flipX = false;
+                    GenericBullet.transform.position = batman.position + new Vector2(25.0f, -18.0f);
+                    BulletInstance1 = Instantiate(GenericBullet, GenericBullet.transform.position, GenericBullet.transform.rotation);
+                    BulletInstance1.GetComponent<Rigidbody2D>().velocity = new Vector2(200.0f, 0.0f);
+                    Destroy(BulletInstance1, 2);
+                }
+
+                else if (render.flipX && Grounded)
+                {
+                    NoiseManager.instance.PlaySound("BatShot");
+                    GenericBullet.GetComponent<SpriteRenderer>().flipX = true;
+                    GenericBullet.transform.position = batman.position + new Vector2(-25.0f, -18.0f);
                     BulletInstance1 = Instantiate(GenericBullet, GenericBullet.transform.position, GenericBullet.transform.rotation);
                     BulletInstance1.GetComponent<Rigidbody2D>().velocity = new Vector2(-200.0f, 0.0f);
                     Destroy(BulletInstance1, 2);
@@ -261,36 +329,89 @@ public class Batman : HealthandDeath
             }
         }
 
-        if (Input.GetButton("Fire2") == false)
+       
+
+        else if (Input.GetButton("Fire2") && animation.GetBool("isCrouching"))
         {
-            animation.SetBool("isShooting2", false);
-            shootNow2 = false;
+            canJump = false;
+            animation.SetBool("isCrouchShooting", true);
+            shootNow2 = true;
+
+            if (shootNow2 && Time.time > nextFire1)
+            {
+                if (!render.flipX && Grounded)
+                {
+                    NoiseManager.instance.PlaySound("BatShot");
+                    nextFire1 = Time.time + fireRate;
+                    GenericBullet.GetComponent<SpriteRenderer>().flipX = false;
+                    GenericBullet.transform.position = batman.position + new Vector2(25.0f, -18.0f);
+                    BulletInstance1 = Instantiate(GenericBullet, GenericBullet.transform.position, GenericBullet.transform.rotation);
+                    BulletInstance1.GetComponent<Rigidbody2D>().velocity = new Vector2(200.0f, 0.0f);
+                    Destroy(BulletInstance1, 2);
+                }
+
+                else if (render.flipX && Grounded)
+                {
+                    NoiseManager.instance.PlaySound("BatShot");
+                    nextFire1 = Time.time + fireRate;
+                    GenericBullet.GetComponent<SpriteRenderer>().flipX = true;
+                    GenericBullet.transform.position = batman.position + new Vector2(-25.0f, -18.0f);
+                    BulletInstance1 = Instantiate(GenericBullet, GenericBullet.transform.position, GenericBullet.transform.rotation);
+                    BulletInstance1.GetComponent<Rigidbody2D>().velocity = new Vector2(-200.0f, 0.0f);
+                    Destroy(BulletInstance1, 2);
+
+                }
+            }
         }
+        else
+        {
+            animation.SetBool("isCrouchShooting", false);
+        }
+
+
+        #endregion
+
+       
     }
 
     public override void Death()
     {
         // fix the pivots on the hit and death animations 
-        if (batman.GetComponent<HealthandDeath>().maxHealth <= 0)
+        if (maxHealth <= 0)
         {
             animation.SetBool("isDead", true);
-            if (animation.GetBool("isDead") == true)
+            isDead = true;
+
+            if (animation.GetBool("isDead"))
             {
                 animation.SetBool("isHit", false);
                 batman.velocity = new Vector2(0.0f, 0.0f);
+
             }
+
         }
 
         else
         {
             animation.SetBool("isDead", false);
-
         }
+
     }
 
     public void DeathReset()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        theBatLives -= 1;
+        isDead = false;
+    }
+
+    public void GameOver()
+    {
+        if (theBatLives <= 0)
+        {
+            SceneManager.LoadScene("CountDown");
+
+        }
     }
 
     public void WhenToShoot()
@@ -303,7 +424,7 @@ public class Batman : HealthandDeath
     {
         animation.SetBool("isHit", false);
     }
-     
+
 
     public void HitKnockBack()
     {
@@ -327,118 +448,115 @@ public class Batman : HealthandDeath
     {
         animation.SetBool("isCrouchDone", true);
         animation.SetBool("isCrouchDone", false);
+        canJump = true;
     }
 
     //when hit batman can flip  and it changes the direction of the knock back ////FIX THIS SHIT////    
     public void theBatsHitCondition()
     {
-        if(animation.GetBool("isHit"))
+        if (animation.GetBool("isHit"))
         {
             batHealth.IsHitForHealthBar = true;
             canHit = false;
+            canJump = false;
         }
 
-        else if(!animation.GetBool("isHit"))
+        else if (!animation.GetBool("isHit"))
         {
             batHealth.IsHitForHealthBar = false;
             canHit = true;
         }
-        
     }
 
-    // fix collider issues with ball and chain and make it push you back when hit
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void IntroDone()
     {
-        if (animation.GetBool("isDead") == false)
+        if (!animation.GetBool("introDone"))
         {
-            if (collision.gameObject.tag == "BallnChain" || collision.gameObject.tag == "BallnChain1" || collision.gameObject.tag == "BallnChain2")
+            batman.velocity = new Vector2(60, -100);
+        }
+
+        if (Grounded)
+        {
+            if (introDone)
             {
-                if (!batHealth.IsHitForHealthBar)
-                {
-                    animation.SetBool("isHit", true);
-                    batHealth.maxHealth -= 1;
-                }
+                animation.SetBool("introDone", true);
             }
-
-            if (collision.gameObject.tag == "KnifeEnemy")
-            {
-                if (!batHealth.IsHitForHealthBar)
-                {
-                    animation.SetBool("isHit", true);
-                    batHealth.maxHealth -= knifeThrower[0].theDamage;
-                }
-            }
-
-            if (collision.gameObject.tag == "Knife")
-            {
-                if (!batHealth.IsHitForHealthBar)
-                {
-                    animation.SetBool("isHit", true);
-                    batHealth.maxHealth -= 1;
-                }
-            }
-
-            if (collision.gameObject.tag == "KnifeEnemy1")
-            {
-                if (!batHealth.IsHitForHealthBar)
-                {
-                    animation.SetBool("isHit", true);
-                    batHealth.maxHealth -= knifeThrower[1].theDamage;
-                }
-            }
-            
-
-            if (collision.gameObject.tag == "JBULLETS")
-            {
-                if (!batHealth.IsHitForHealthBar)
-                {
-                    animation.SetBool("isHit", true);
-                    batHealth.maxHealth -= 1;
-                }
-            }
-
-
-
-
-
-
         }
     }
 
-        private void OnCollisionEnter2D(Collision2D collision)
+    public void endIntroAnimation()
+    {
+        introDone = true;
+        NoiseManager.instance.PlaySound("MainLoop");
+    }
+
+    public void playHitSound()
+    {
+        NoiseManager.instance.PlaySound("BatmanHit");
+    }
+
+    public void PlayDeathNoise()
+    {
+        NoiseManager.instance.PlaySound("BatmanDeath");
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!batHealth.IsHitForHealthBar)
         {
-            if (collision.gameObject.tag == "BoltAttack")
+            if (collision.gameObject.tag == "Knife")
             {
                 animation.SetBool("isHit", true);
                 batHealth.maxHealth -= 1;
-                Destroy(collision.gameObject);
+                Debug.Log("You hit me bro");
             }
         }
+    }
 
-        private void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "BoltAttack")
         {
-            if (collision.gameObject.tag == "Floor" || collision.gameObject.tag == "Stand")
-            {
-                Grounded = true;
-                animation.SetBool("isJumping", false);
-                jumpedHeld = false;
-            }
-
-
-            if (collision.gameObject.tag == "PlatformFloor" || collision.gameObject.tag == "PlatformFloor2"
-                || collision.gameObject.tag == "PlatformFloor3" || collision.gameObject.tag == "PlatformFloor4")
-            {
-                Grounded = true;
-                animation.SetBool("isJumping", false);
-                jumpedHeld = false;
-            }
-
-            if (collision.gameObject.tag == "PlatformFloor1" || collision.gameObject.tag == "Crate")
-            {
-                Grounded = true;
-                animation.SetBool("isJumping", false);
-                jumpedHeld = false;
-            }
+            animation.SetBool("isHit", true);
+            batHealth.maxHealth -= 1;
+            Destroy(collision.gameObject);
         }
-    
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Floor" || collision.gameObject.tag == "Stand")
+        {
+            Grounded = true;
+            animation.SetBool("isJumping", false);
+            jumpedHeld = false;
+            canJump = true;
+        }
+
+        if (collision.gameObject.tag == "PlatformFloor" || collision.gameObject.tag == "PlatformFloor2"
+            || collision.gameObject.tag == "PlatformFloor3" || collision.gameObject.tag == "PlatformFloor4")
+        {
+            Grounded = true;
+            animation.SetBool("isJumping", false);
+            jumpedHeld = false;
+            canJump = true;
+        }
+
+        if (collision.gameObject.tag == "PlatformFloor1")
+        {
+            Grounded = true;
+            animation.SetBool("isJumping", false);
+            jumpedHeld = false;
+            canJump = true;
+        }
+
+        if (collision.gameObject.tag == "CrateHitBox" || collision.gameObject.tag == "CrateHitBox1" || collision.gameObject.tag == "CrateHitBox2" || collision.gameObject.tag == "CrateHitBox3"
+            || collision.gameObject.tag == "CrateHitBox4" || collision.gameObject.tag == "CrateHitBox5" || collision.gameObject.tag == "CrateHitBox6" || collision.gameObject.tag == "CrateHitBox7")
+        {
+            Grounded = true;
+            animation.SetBool("isJumping", false);
+            jumpedHeld = false;
+            canJump = true;
+        }
+    }
 }

@@ -58,6 +58,41 @@ TagManager:
   - Crate4
   - Crate5
   - Crate6
+  - PowerUp
+  - Crate7
+  - HeadCollider
+  - CrateHitBox
+  - CrateHitBox1
+  - CrateHitBox2
+  - CrateHitBox3
+  - CrateHitBox4
+  - CrateHitBox5
+  - CrateHitBox6
+  - CrateHitBox7
+  - Pause
+  - B
+  - A
+  - T
+  - M
+  - A1
+  - N
+  - TM
+  - ROTJ
+  - SUNSOFT
+  - LetterHolder
+  - LetterHolder1
+  - LetterHolder2
+  - LetterHolder3
+  - LetterHolder4
+  - LetterHolder5
+  - NGB
+  - NGDot
+  - NGButton
+  - GOText
+  - Blocker
+  - Lives
+  - Lives1
+  - Lives2
   layers:
   - Default
   - TransparentFX

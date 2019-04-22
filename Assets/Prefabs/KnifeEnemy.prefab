@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6669489007478874336
+--- !u!1 &408815060700803606
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,13 +8,13 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5034350124689724036}
-  - component: {fileID: 4895517061768333290}
-  - component: {fileID: 3112654717529157161}
-  - component: {fileID: 1982460538175104598}
-  - component: {fileID: 2761963162434302361}
-  - component: {fileID: 6410529323386818986}
-  - component: {fileID: 240156664324263036}
+  - component: {fileID: 408815060700803629}
+  - component: {fileID: 408815060700803628}
+  - component: {fileID: 408815060700803627}
+  - component: {fileID: 408815060700803626}
+  - component: {fileID: 408815060700803625}
+  - component: {fileID: 408815060700803624}
+  - component: {fileID: 408815060700803607}
   m_Layer: 8
   m_Name: KnifeEnemy
   m_TagString: KnifeEnemy
@@ -22,28 +22,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5034350124689724036
+--- !u!4 &408815060700803629
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6669489007478874336}
+  m_GameObject: {fileID: 408815060700803606}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 716.9934, y: 235.6, z: -6}
+  m_LocalPosition: {x: 690.9, y: 288.7, z: -6}
   m_LocalScale: {x: 1, y: 1.0560001, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!50 &4895517061768333290
+--- !u!50 &408815060700803628
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6669489007478874336}
+  m_GameObject: {fileID: 408815060700803606}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
@@ -57,13 +57,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
---- !u!61 &3112654717529157161
+--- !u!61 &408815060700803627
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6669489007478874336}
+  m_GameObject: {fileID: 408815060700803606}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -83,13 +83,13 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 31.271614, y: 32.106632}
   m_EdgeRadius: 0
---- !u!212 &1982460538175104598
+--- !u!212 &408815060700803626
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6669489007478874336}
+  m_GameObject: {fileID: 408815060700803606}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -131,14 +131,14 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &2761963162434302361
+--- !u!95 &408815060700803625
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6669489007478874336}
+  m_GameObject: {fileID: 408815060700803606}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: ed5986c7d3a625f41a672c9362e145b6, type: 2}
@@ -150,13 +150,13 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!111 &6410529323386818986
+--- !u!111 &408815060700803624
 Animation:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6669489007478874336}
+  m_GameObject: {fileID: 408815060700803606}
   m_Enabled: 1
   serializedVersion: 3
   m_Animation: {fileID: 0}
@@ -165,28 +165,35 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
---- !u!114 &240156664324263036
+--- !u!114 &408815060700803607
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6669489007478874336}
+  m_GameObject: {fileID: 408815060700803606}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba352c91f97ab28488249a0423bd3df9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
-  theDamage: 0
+  theDamage: 1
+  IsHitForHealthBar: 0
   theBats: {fileID: 0}
   Direction: {x: 0, y: 0}
-  Distance: 0
+  xDistance: 0
+  yDistance: 0
   Bullets:
   - {fileID: 731244673936779124, guid: e0b9c3b575eed7f49950dcef4e383840, type: 3}
   - {fileID: 8276679252200375078, guid: 2ec61d6978e7fda47a664f8cca140e13, type: 3}
   - {fileID: 1534013069657675706, guid: 80847330ed5f7ba44a2987e32b1fa35a, type: 3}
   Flash: {fileID: 7251263644470023980, guid: c9e134069aa2d284baeeeab2cfca6a56, type: 3}
+  enemySprite: {fileID: 0}
+  enemyRb: {fileID: 0}
+  enemyHealth: {fileID: 0}
+  enemyAnimator: {fileID: 0}
+  enemyCollider: {fileID: 0}
   angle: 0
   destroyFlash: 0
   timeTillNextShot: 0
@@ -196,9 +203,12 @@ MonoBehaviour:
   isShooting: 0
   thisTurned: 0
   nextFire: 0
+  jumpHeight: 0
+  shootNow: 0
+  jumpEnemyIsShooting: 0
+  jumppedAttacked: 0
   fireRate: 0.5
   canAttack: 0
   enemyCurrentPos: {x: 0, y: 0}
   waitToAttackTimer: 0
-  knifeThrower: []
-  gotHit: 0
+  isHit: 0
